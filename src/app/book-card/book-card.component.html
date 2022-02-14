@@ -4,8 +4,14 @@
 
 <h4>{{ content?.author }}</h4>
 
-<button>Click me!</button>
+<p>
+    {{ content?.isbn | bmIsbn }}
+</p>
+
+<button (click)="handleButtonClick($event)">Click me!</button>
 
 <p [ngStyle]="customStyle">
     {{ content?.abstract }}
 </p>
+
+<pre><code>{{ content | json }}</code></pre>
