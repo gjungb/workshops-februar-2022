@@ -1,33 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Book } from '../model/book';
+import { BookApiService } from '../shared/book-api.service';
 
 @Component({
   selector: 'app-book-list',
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.scss'],
 })
-export class BookListComponent implements OnInit {
-  books: Book[] = [
-    {
-      isbn: '9783866801929',
-      title: 'How to win friends',
-      author: 'Dale Carnegie',
-      abstract: 'How to Win Friends and Influence ...',
-    },
-    {
-      title: 'The Willpower Instinct: How Self-Control Works ...',
-      author: 'Kelly McGonigal',
-      abstract: 'Based on Stanford University ...',
-    },
-    {
-      author: 'Simon Sinek',
-      title: 'Start with WHY',
-    },
-  ];
+export class BookListComponent implements OnInit, OnDestroy {
+  books!: Book[];
 
-  constructor() {}
+  private sub?: Subscription;
 
-  ngOnInit(): void {}
+  constructor(private readonly bookApi: BookApiService) {}
+
+  ngOnInit(): void {
+    /**
+     * timing
+     *
+     * ticker$
+     */
+    this.sub = timer(3000, 1000)
+      .pipe(tap((value) => console.log(value)))
+      .subscribe();
+
+    /**
+     *
+     */
+    this.bookApi
+      .getAll()
+      .pipe(tap((value) => console.log(value)))
+      .subscribe({
+        next: (value) => {
+          this.books = value;
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
 
   handleBookDetail(book: Book): void {
     console.log(book);
