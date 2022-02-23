@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Book } from '../model/book';
 import { BookApiService } from '../shared/book-api.service';
@@ -10,7 +10,9 @@ import { BookApiService } from '../shared/book-api.service';
   styleUrls: ['./book-list.component.scss'],
 })
 export class BookListComponent implements OnInit, OnDestroy {
-  books!: Book[];
+  // books!: Book[];
+
+  books$!: Observable<Book[]>;
 
   private sub?: Subscription;
 
@@ -29,14 +31,9 @@ export class BookListComponent implements OnInit, OnDestroy {
     /**
      *
      */
-    this.bookApi
+    this.books$ = this.bookApi
       .getAll()
-      .pipe(tap((value) => console.log(value)))
-      .subscribe({
-        next: (value) => {
-          this.books = value;
-        },
-      });
+      .pipe(tap((value) => console.log(value)));
   }
 
   ngOnDestroy(): void {

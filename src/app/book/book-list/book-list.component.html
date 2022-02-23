@@ -1,10 +1,21 @@
 <p>book-list works!</p>
 
-<ol>
-  <li *ngFor="let book of books">
-    <app-book-card
-      [bmContent]="book"
-      (detailClick)="handleBookDetail($event)"
-    ></app-book-card>
-  </li>
-</ol>
+<ng-container *ngIf="books$ | async as things; else loader">
+  <h5>
+    We have {{ things.length }} Books.
+  </h5>
+  <ol>
+    <li *ngFor="let book of things">
+      <app-book-card
+        [bmContent]="book"
+        (detailClick)="handleBookDetail($event)"
+      ></app-book-card>
+    </li>
+  </ol>
+</ng-container>
+
+<ng-template #loader>
+  <p>
+    Bin am Laden ...
+  </p>
+</ng-template>
